@@ -4,6 +4,10 @@ class Cart {
   // HashMap of Books, indexed by id, with a tuple of (count, book)
   var books: mutable.HashMap[Int, (Int, Book)] = mutable.HashMap()
 
+  /**
+   * Add a new book to the cart
+   * @param book
+   */
   def addBook(book: Book): Unit = {
     if (books contains book.id) {
       val (count, b): (Int, Book) = books.get(book.id).get
@@ -13,10 +17,27 @@ class Cart {
     }
   }
 
+  /**
+   * Get the total number of articles
+   * @return
+   */
   def size(): Int = {
-    books.size
+    books.foldLeft[Int](0){
+      case (acc, (_, (count, _))) => acc + count
+    }
   }
 
+  /**
+   * Return the number of different articles in the cart
+   * @return
+   */
+  def uniqSize(): Int = this.books.size
+
+  /**
+   * Remove a book from the cart, true if removed, false otherwise
+   * @param book
+   * @return
+   */
   def remove(book: Book): Boolean = {
     if (books contains book.id) {
       val (count, b): (Int, Book) = books.get(book.id).get
@@ -31,13 +52,25 @@ class Cart {
   }
 
   /**
-   *
+   * Return the flat price of the price without reductions at all
    * @return
    */
   def getFlatPrice (): Double = {
     val price: Double = books.foldLeft[Double](0.0){
-      case (acc, (id, (count, book))) => acc + count * book.price
+      case (acc, (_, (count, book))) => acc + count * book.price
     }
     price
   }
+
+  /**
+   * Clone a cart by returning a new identical instance
+   * @return
+   */
+  override def clone(): Cart = {
+    val cart = new Cart()
+    cart.books = this.books.clone()
+    cart
+  }
+
+  override def toString: String = s"Cart($books)"
 }
