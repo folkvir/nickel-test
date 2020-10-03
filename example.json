@@ -1,0 +1,62 @@
+{
+  "books": [
+    {
+      "id": 0,
+      "name": "tome 1",
+      "price": 8
+    },
+    {
+      "id": 0,
+      "name": "tome 1",
+      "price": 8
+    },
+    {
+      "id": 1,
+      "name": "tome 2",
+      "price": 8
+    },
+    {
+      "id": 1,
+      "name": "tome 2",
+      "price": 8
+    },
+    {
+      "id": 2,
+      "name": "tome 3",
+      "price": 8
+    },
+    {
+      "id": 2,
+      "name": "tome 3",
+      "price": 8
+    },
+    {
+      "id": 3,
+      "name": "tome 4",
+      "price": 8
+    },
+    {
+      "id": 3,
+      "name": "tome 5",
+      "price": 8
+    }
+  ],
+  "reductions": [
+    {
+      "reduction": 0.05,
+      "different": 2
+    },
+    {
+      "reduction": 0.1,
+      "different": 3
+    },
+    {
+      "reduction": 0.2,
+      "different": 4
+    },
+    {
+      "reduction": 0.25,
+      "different": 5
+    }
+  ]
+}

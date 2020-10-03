@@ -19,6 +19,6 @@ determine the smallest price for the client.
 
 Eg: 
 * Articles: (book 1, 10$) (book 2, 20$) (book 3, 5$)
-* Cart: 2 * book-1 + 2 * book-2 + 1 * book-3
+* calculator.Cart: 2 * book-1 + 2 * book-2 + 1 * book-3
 * Reductions: 5% for 2 differents books, 10% for three different books
 **What is the smallest price; reformulated: what is the best composition of reductions offering the best price for the client?**

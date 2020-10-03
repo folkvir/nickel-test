@@ -1,11 +1,14 @@
+package calculator
+
 import scala.collection.mutable
 
-class Cart {
+case class Cart() {
   // HashMap of Books, indexed by id, with a tuple of (count, book)
   var books: mutable.HashMap[Int, (Int, Book)] = mutable.HashMap()
 
   /**
    * Add a new book to the cart
+   *
    * @param book
    */
   def addBook(book: Book): Unit = {
@@ -19,22 +22,25 @@ class Cart {
 
   /**
    * Get the total number of articles
+   *
    * @return
    */
   def size(): Int = {
-    books.foldLeft[Int](0){
+    books.foldLeft[Int](0) {
       case (acc, (_, (count, _))) => acc + count
     }
   }
 
   /**
    * Return the number of different articles in the cart
+   *
    * @return
    */
   def uniqSize(): Int = this.books.size
 
   /**
    * Remove a book from the cart, true if removed, false otherwise
+   *
    * @param book
    * @return
    */
@@ -53,10 +59,11 @@ class Cart {
 
   /**
    * Return the flat price of the price without reductions at all
+   *
    * @return
    */
-  def getFlatPrice (): Double = {
-    val price: Double = books.foldLeft[Double](0.0){
+  def getFlatPrice(): Double = {
+    val price: Double = books.foldLeft[Double](0.0) {
       case (acc, (_, (count, book))) => acc + count * book.price
     }
     price
@@ -64,6 +71,7 @@ class Cart {
 
   /**
    * Clone a cart by returning a new identical instance
+   *
    * @return
    */
   override def clone(): Cart = {
@@ -72,5 +80,5 @@ class Cart {
     cart
   }
 
-  override def toString: String = s"Cart($books)"
+  override def toString: String = s"calculator.Cart($books)"
 }
