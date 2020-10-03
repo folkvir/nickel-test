@@ -24,13 +24,15 @@ class Reduction(val reduction: Double, val different: Int) {
     var price = 0.0
     val newCart: Cart = cart.clone()
     var took = 0
-    cart.books.foreach { case (_, (_, book: Book)) => {
-      if (took < different) {
-        newCart.remove(book)
-        price += book.price
-        took += 1
-      }
-    } }
+    // should have enough element to loop while
+    // we need to sort by number of elements to take first books with the highest count
+    val sorted = cart.books.toArray.sortBy(_._2._1).reverse
+    while (took < different) {
+      val elem = sorted(took)
+      newCart.remove(elem._2._2)
+      price += elem._2._2.price
+      took += 1
+    }
     (price * (1 - reduction), newCart)
   }
 

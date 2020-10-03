@@ -22,6 +22,18 @@ object Calculator {
   }
 
   /**
+   * Compute the price but also the time it took to compute
+   * @param cart
+   * @param reductions
+   * @return
+   */
+  def computePriceWithTime(cart: Cart, reductions: ArrayBuffer[Reduction]): (Double, Long) = {
+    val start = System.currentTimeMillis()
+    val price = this.computePrice(cart, reductions)
+    (price, System.currentTimeMillis() - start)
+  }
+
+  /**
    * Produce the best price using a brut force approach,
    * aka we generate all possible solutions of reductions then we choose the smallest price
    * @param cart
@@ -42,17 +54,21 @@ object Calculator {
     })
 
     // init min to the flat price
-    var minimum = cart.getFlatPrice()
+    var minimum: (Double, Node[Reduction]) = (cart.getFlatPrice(), null)
     // then for each trees, go to each leaf and take the minimum price
     trees.foreach(tree => {
-      val leafes: ArrayBuffer[Double] = getLeafes(tree, ArrayBuffer[Double]())
-      minimum = minimum.min(leafes.min)
+      val leafes: ArrayBuffer[(Double, Node[Reduction])] = getLeafes(tree, ArrayBuffer[(Double, Node[Reduction])]())
+      val minLeaf = leafes.minBy(_._1)
+      val min = minimum._1.min(minLeaf._1)
+      if (min < minimum._1) {
+        minimum = minLeaf
+      }
     })
-    minimum
+    minimum._1
   }
 
   // Definition of the tree: a Node has a reduction property "node" and has 0 or more Nodes as "sons"
-  case class Node[A](node: A, var price: Double, sons: ArrayBuffer[Node[A]]) {
+  case class Node[A](parent: AnyRef, node: A, var price: Double, sons: ArrayBuffer[Node[A]]) {
     override def toString: String = s"Node($node, $price, $sons)"
   }
 
@@ -65,7 +81,7 @@ object Calculator {
    */
   def createTree(cart: Cart, first: Reduction, reductions: ArrayBuffer[Reduction]): Node[Reduction] = {
     val (price, newCart) = first.apply(cart)
-    val tree = new Node(first, price, new ArrayBuffer[Node[Reduction]]())
+    val tree = Node(null, first, price, new ArrayBuffer[Node[Reduction]]())
     // from this step we need to create recursively the tree
     createTreeBis(newCart, tree, reductions)
   }
@@ -86,8 +102,8 @@ object Calculator {
       filter.foreach(reduction => {
         // apply the reduction on the cart and continue the creation
         val (price, newCart) = reduction.apply(cart.clone())
-        val node = new Node(reduction, tree.price + price, new ArrayBuffer[Node[Reduction]]())
-        tree.sons.addOne(createTreeBis(newCart.clone(), node, reductions.clone()))
+        val node = Node(tree, reduction, tree.price + price, new ArrayBuffer[Node[Reduction]]())
+        tree.sons.addOne(createTreeBis(newCart, node, reductions.clone()))
       })
       tree
     }
@@ -99,15 +115,33 @@ object Calculator {
    * @param res an empty array of double
    * @return
    */
-  def getLeafes (tree: Node[Reduction], res: ArrayBuffer[Double]): ArrayBuffer[Double] = {
+  def getLeafes (tree: Node[Reduction], res: ArrayBuffer[(Double, Node[Reduction])]): ArrayBuffer[(Double, Node[Reduction])]  = {
     if(tree.sons.length == 0) {
-      res.addOne(tree.price)
+      res.addOne((tree.price, tree))
     } else {
       tree.sons.foreach(s => {
         getLeafes(s, res)
       })
     }
     res
+  }
+
+  /**
+   * Walk through the path to the root and return every node met
+   * The first element is the leaf, the last is the root
+   * @param leaf
+   * @return an array of all reduction met with their associated price
+   */
+  def getWalkFromLeaf(leaf: AnyRef): ArrayBuffer[(Reduction, Double)] = {
+    var tmp: AnyRef = leaf
+    // now we have the min leaf, we can get all the way back to the root
+    val walk = new ArrayBuffer[(Reduction, Double)]()
+    while (tmp != null) {
+      val node: Calculator.Node[Reduction] = tmp.asInstanceOf[Calculator.Node[Reduction]]
+      walk.addOne((node.node, node.price))
+      tmp = node.parent
+    }
+    walk
   }
 
 }

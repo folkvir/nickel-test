@@ -47,21 +47,64 @@ class TestCart extends AnyFunSuite {
     }
   }
 
-  test ("Testing the example") {
+  test ("Testing the example (2, 2, 2, 1, 1)") {
     new Builder() {
       // make example of the test
       exampleBooks.foreach(book => {
         cart.addBook(book)
       })
+
+      cart.books.update(1, (2, cart.books.get(1).get._2))
+      cart.books.update(2, (1, cart.books.get(2).get._2))
+      cart.books.update(3, (2, cart.books.get(3).get._2))
+      cart.books.update(4, (1, cart.books.get(4).get._2))
+      cart.books.update(5, (2, cart.books.get(5).get._2))
       assertResult(2)(cart.books.get(1).get._1) // 2 tome-1
-      assertResult(2)(cart.books.get(2).get._1) // 2 tome-2
+      assertResult(1)(cart.books.get(2).get._1) // 2 tome-2
       assertResult(2)( cart.books.get(3).get._1) // 2 tome-3
       assertResult(1)(cart.books.get(4).get._1) // 1 tome-4
-      assertResult(1)(cart.books.get(5).get._1) // 1 tome-1
+      assertResult(2)(cart.books.get(5).get._1) // 1 tome-1
+
+      // just test to apply a reduction
+      assertResult(4)(exampleReductions(2).apply(cart)._2.size())
+      assertResult(4)(exampleReductions(2).apply(cart)._2.uniqSize())
       // test flatPrice
       assertResult(64)(cart.getFlatPrice())
+      val (price, time) = Calculator.computePriceWithTime(cart, exampleReductions)
+      println(s"Time to process for a cart of size ${cart.size()} = $time (ms)")
+      assertResult(51.2)(price)
+    }
+  }
 
-      assertResult(51.2)(Calculator.computePrice(cart, exampleReductions))
+  test ("Testing the example (5, 4, 5, 4, 5)") {
+    new Builder() {
+      // make example of the test
+      exampleBooks.foreach(book => {
+        cart.addBook(book)
+      })
+      // set the example
+      cart.books.update(1, (5, cart.books.get(1).get._2))
+      cart.books.update(2, (4, cart.books.get(2).get._2))
+      cart.books.update(3, (5, cart.books.get(3).get._2))
+      cart.books.update(4, (4, cart.books.get(4).get._2))
+      cart.books.update(5, (5, cart.books.get(5).get._2))
+
+      // test flatPrice
+      assertResult(184)(cart.getFlatPrice())
+      val (price, time) = Calculator.computePriceWithTime(cart, exampleReductions)
+      println(s"Time to process for a cart of size ${cart.size()} = $time (ms)")
+      assertResult(141.2)(price)
+
+      cart.books.update(1, (5, cart.books.get(1).get._2))
+      cart.books.update(2, (5, cart.books.get(2).get._2))
+      cart.books.update(3, (5, cart.books.get(3).get._2))
+      cart.books.update(4, (4, cart.books.get(4).get._2))
+      cart.books.update(5, (4, cart.books.get(5).get._2))
+
+      assertResult(184)(cart.getFlatPrice())
+      val (price2, time2) = Calculator.computePriceWithTime(cart, exampleReductions)
+      println(s"Time to process for a cart of size ${cart.size()} = $time2 (ms)")
+      assertResult(141.2)(price2)
     }
   }
 }
