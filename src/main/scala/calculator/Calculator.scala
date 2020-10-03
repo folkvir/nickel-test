@@ -1,6 +1,6 @@
 package calculator
 
-import java.io.{File, FileInputStream}
+import java.io.{File, FileInputStream, InputStream}
 
 import calculator.Readers.{bookReader, reductionReader}
 import play.api.libs.json.{JsArray, Json}
@@ -8,8 +8,7 @@ import play.api.libs.json.{JsArray, Json}
 import scala.collection.mutable.ArrayBuffer
 
 object Calculator {
-  def buildJSON(jsonFilePath: File): (Cart, ArrayBuffer[Reduction]) = {
-    val stream = new FileInputStream(jsonFilePath)
+  def buildJSON(stream: InputStream): (Cart, ArrayBuffer[Reduction]) = {
     val json = try {  Json.parse(stream) } finally { stream.close() }
     val books = (json \ "books").as[JsArray].value.map(book => book.as[Book])
     val reductions = (json \ "reductions").as[JsArray].value.map(red => red.as[Reduction]).to(ArrayBuffer)

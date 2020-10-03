@@ -1,3 +1,5 @@
+import sbt.Keys.resourceDirectory
+
 scalaVersion in ThisBuild := "2.13.3"
 
 lazy val commonSettings = Seq(
@@ -5,7 +7,10 @@ lazy val commonSettings = Seq(
   organization := "com.example",
   version := "0.1.0-SNAPSHOT",
   mainClass := Some("calculator.CLICalculator"),
-  assemblyJarName in assembly := "nickel.jar"
+  mainClass in assembly := Some("calculator.CLICalculator"),
+  assemblyJarName in assembly := "nickel.jar",
+  resourceDirectory in Compile := baseDirectory.value / "src/main/resources/",
+  resourceDirectory in Runtime := baseDirectory.value / "src/main/resources/"
 )
 
 libraryDependencies ++= Seq(
