@@ -4,6 +4,7 @@ import scala.collection.mutable
 
 case class Cart() {
   // HashMap of Books, indexed by id, with a tuple of (count, book)
+  // better in memory than array 'cause of occurrences
   var books: mutable.HashMap[Int, (Int, Book)] = mutable.HashMap()
 
   /**

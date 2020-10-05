@@ -41,11 +41,13 @@ class TestCart extends AnyFunSuite {
       assertResult(2)(cart.books.size)
     }
   }
-  test ("Testing cart total price") {
+  test ("Testing cart total price and one reduction") {
     new Builder() {
       cart.addBook(book)
       cart.addBook(book2)
       assertResult(18.5: Double)(cart.getFlatPrice())
+      assertResult(18.5)(Calculator.computePrice(cart, ArrayBuffer()))
+      assertResult(9.25)(Calculator.computePrice(cart, ArrayBuffer(new Reduction(0.5, 1))))
     }
   }
 

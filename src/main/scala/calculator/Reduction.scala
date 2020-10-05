@@ -1,7 +1,5 @@
 package calculator
 
-import play.api.libs.json.Json
-
 /**
  * A reduction entry: formulae is price * (1 - reduction)
  *
